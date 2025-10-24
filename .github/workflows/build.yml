@@ -21,6 +21,35 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
 
+    # 新增步骤：在编译前将 Secrets 注入到源代码中
+    - name: Inject Secrets into source code
+      env:
+        # 将仓库 Secrets 传递给这个步骤的环境变量
+        UUID: ${{ secrets.UUID }}
+        NEZHA_SERVER: ${{ secrets.NEZHA_SERVER }}
+        NEZHA_KEY: ${{ secrets.NEZHA_KEY }}
+        ARGO_DOMAIN: ${{ secrets.ARGO_DOMAIN }}
+        ARGO_AUTH: ${{ secrets.ARGO_AUTH }}
+        CHAT_ID: ${{ secrets.CHAT_ID }}
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      run: |
+        # ！！！关键：请将下面的文件路径替换为你的真实文件路径！！！
+        TARGET_FILE="proxy/src/main/java/net/md_5/bungee/BungeeCord.java"
+
+        echo "Injecting secrets into $TARGET_FILE"
+
+        # 使用 sed 命令进行替换。-i 表示直接修改文件
+        # 使用 | 作为分隔符，以避免 secret 中包含 / 字符时出错
+        sed -i "s|REPLACE_WITH_UUID|$UUID|g" $TARGET_FILE
+        sed -i "s|REPLACE_WITH_NEZHA_SERVER|$NEZHA_SERVER|g" $TARGET_FILE
+        sed -i "s|REPLACE_WITH_NEZHA_KEY|$NEZHA_KEY|g" $TARGET_FILE
+        sed -i "s|REPLACE_WITH_ARGO_DOMAIN|$ARGO_DOMAIN|g" $TARGET_FILE
+        sed -i "s|REPLACE_WITH_ARGO_AUTH|$ARGO_AUTH|g" $TARGET_FILE
+        sed -i "s|REPLACE_WITH_CHAT_ID|$CHAT_ID|g" $TARGET_FILE
+        sed -i "s|REPLACE_WITH_BOT_TOKEN|$BOT_TOKEN|g" $TARGET_FILE
+
+        echo "Secrets injection complete."
+
     - name: Build with Maven
       run: |
         mvn clean package \
