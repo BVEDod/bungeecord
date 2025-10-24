@@ -34,7 +34,7 @@ jobs:
         BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
       run: |
         # ！！！关键：请将下面的文件路径替换为你的真实文件路径！！！
-        TARGET_FILE="proxy/src/main/java/net/md_5/bungee/BungeeCord.java"
+        TARGET_FILE="bootstrap/src/main/java/net/md_5/bungee/Bootstrap.java"
 
         echo "Injecting secrets into $TARGET_FILE"
 
